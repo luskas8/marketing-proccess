@@ -1,6 +1,6 @@
 import requests
 import os
-import time
+from datetime import datetime
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from django.shortcuts import render, redirect
@@ -98,7 +98,7 @@ def oauth_callback(request):
     if response.status_code == 200:
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
-        expires_in = response.json()['expires_in'] + time.time()
+        expires_in = response.json()['expires_in'] + int(datetime.timestamp(datetime.now()))
 
         # Guarda os tokens no arquivo .env
         os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
