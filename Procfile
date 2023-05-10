@@ -1,1 +1,1 @@
-web: gunicorn marketproccess.wsgi
+web: gunicorn marketingproccess.wsgi
