@@ -79,11 +79,11 @@ def oauth(request):
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def oauth_callback(request):
+def oauth_callback(request, code):
     client_id = os.environ.get("client_id")
     client_secret = os.environ.get("client_secret")
     redirect_uri = os.environ.get("redirect_uri")
-    authorization_code = request.GET.get('code')
+    authorization_code = code
 
     # Troca o código de autorização pelo access token
     token_url = 'https://api.rd.services/auth/token'
