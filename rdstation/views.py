@@ -1,6 +1,7 @@
 import requests
 import os
 import time
+from dotenv import load_dotenv
 from urllib.parse import urlencode
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -9,23 +10,64 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
+load_dotenv()
+
 @api_view(['GET', 'POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
 def webhook(request):
+    # Se o método da requisição é GET e retorna uma mensagem de sucesso caso o webhook esteja funcionando
     if request.method == 'GET':
-        return Response({"message":"RDStation webhooks working"}, status=status.HTTP_200_OK)
+        return Response({"message": "RDStation webhooks working"}, status=status.HTTP_200_OK)
+    
+    # Se o método da requisição é POST processa os dados recebidos
     elif request.method == 'POST':
-        return Response({"message":"RDStation webhook received"}, status=status.HTTP_200_OK)
+        data = request.data
+        leads = data["leads"]
+
+        # Obtém os tokens da API de variáveis de ambiente
+        API_TOKEN = os.environ.get("API_TOKEN")
+        COMPANY_DOMAIN = os.environ.get("COMPANY_DOMAIN")
+        pipedrive_url = "https://{}.pipedrive.com".format(COMPANY_DOMAIN)
+
+        for lead in leads:
+            # Cria uma instância do cliente do Pipedrive com a URL da API
+            pipedrive = PipedriveClient(domain=pipedrive_url)
+            pipedrive.set_api_token(API_TOKEN)
+
+            # Cria uma pessoa no Pipedrive com os dados do lead
+            response = pipedrive.persons.create_person({
+                "name": lead["name"],
+                "email": lead["email"],
+                "phone": [{"value": lead["personal_phone"]}],
+                "visible_to": "3"
+            })
+
+            if not response['success']:
+                return Response({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            personId = response['data']['id']
+
+            # Cria um negócio (deal) no Pipedrive relacionado à pessoa criada
+            response = pipedrive.deals.create_deal({
+                "title": "Negócio gerado pelo RD Station",
+                "person_id": personId,
+                "status": "open"
+            })
+
+            if not response['success']:
+                return Response({"message": "Error when creating Pipedrive deal"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
 def oauth(request):
-    client_id = 'YOUR_CLIENT_ID'
-    redirect_uri = 'YOUR_REDIRECT_URI'
+    client_id = os.environ.get("client_id")
+    redirect_uri = os.environ.get("redirect_uri")
 
-    # Construct the authorization URL
+    # Conntroi a URL de autorização
     params = {
         'client_id': client_id,
         'redirect_uri': redirect_uri,
@@ -38,12 +80,12 @@ def oauth(request):
 @authentication_classes([])
 @permission_classes([AllowAny])
 def oauth_callback(request):
-    client_id = 'YOUR_CLIENT_ID'
-    client_secret = 'YOUR_CLIENT_SECRET'
-    redirect_uri = 'YOUR_REDIRECT_URI'
+    client_id = os.environ.get("client_id")
+    client_secret = os.environ.get("client_secret")
+    redirect_uri = os.environ.get("redirect_uri")
     authorization_code = request.GET.get('code')
 
-    # Exchange the authorization code for an access token
+    # Troca o código de autorização pelo access token
     token_url = 'https://api.rd.services/auth/token'
     payload = {
         'client_id': client_id,
@@ -54,17 +96,15 @@ def oauth_callback(request):
     response = requests.post(token_url, data=payload)
 
     if response.status_code == 200:
-        # Access token retrieved successfully
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
         expiration_time = response.json()['expiration_time'] + time.time()
 
-        # Store the access token and refresh token in environment variables
+        # Guarda os tokens no arquivo .env
         os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
         os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
         os.environ['RDSTATION_EXPIRATION_TIME'] = expiration_time
 
         return Response({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
-    else:
-        # Handle errors when retrieving the access token
-        return Response({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    else: return Response({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_400_BAD_REQUEST)
