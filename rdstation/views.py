@@ -98,12 +98,12 @@ def oauth_callback(request):
     if response.status_code == 200:
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
-        expiration_time = response.json()['expires_in'] + time.time()
+        expires_in = response.json()['expires_in'] + time.time()
 
         # Guarda os tokens no arquivo .env
         os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
         os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
-        os.environ['RDSTATION_EXPIRATION_TIME'] = expiration_time
+        os.environ['RDSTATION_EXPIRATION_TIME'] = expires_in
 
         return Response({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
     
