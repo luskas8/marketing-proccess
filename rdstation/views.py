@@ -98,7 +98,7 @@ def oauth_callback(request):
     if response.status_code == 200:
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
-        expires_in = response.json()['expires_in'] + int(datetime.timestamp(datetime.now()))
+        expires_in = str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
 
         # Guarda os tokens no arquivo .env
         os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
