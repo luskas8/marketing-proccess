@@ -7,10 +7,15 @@
     <title>Interesse no produto</title>
 </head>
 <body>
+    {% if error %}
+        <p style="color: red">Ops, parece que algo deu errado, tente novamente</p>
+    {% endif %}
+
+    <h1>Interesse no produto</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Enviar</button>
+        <button type="submit">Solicitar contato</button>
       </form>
 </body>
 </html>

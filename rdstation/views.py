@@ -22,6 +22,7 @@ def webhook(request):
     
     # Se o método da requisição é POST processa os dados recebidos
     elif request.method == 'POST':
+        print(request.text)
         data = request.data
         leads = data["leads"]
 
@@ -60,6 +61,31 @@ def webhook(request):
 
         return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
 
+def oauth_refresh():
+    client_id = os.environ.get("client_id")
+    client_secret = os.environ.get("client_secret")
+    refresh_token = os.environ.get("refresh_token")
+
+    # Código para obter um novo access token
+    token_url = 'https://api.rd.services/auth/token'
+    payload = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'code': authorization_code,
+        'redirect_uri': redirect_uri,
+    }
+    try:
+        response = requests.post(token_url, data=payload)
+
+        if response.status_code == 200:
+            access_token = response.json()['access_token']
+            refresh_token = response.json()['refresh_token']
+            expires_in =  str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
+            return True
+    except Exception as e:
+        print(e)
+        return False
+
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
@@ -93,18 +119,21 @@ def oauth_callback(request):
         'code': authorization_code,
         'redirect_uri': redirect_uri,
     }
-    response = requests.post(token_url, data=payload)
 
-    if response.status_code == 200:
-        access_token = response.json()['access_token']
-        refresh_token = response.json()['refresh_token']
-        expires_in = str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
+    try:
+        response = requests.post(token_url, data=payload)
 
-        # Guarda os tokens no arquivo .env
-        os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
-        os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
-        os.environ['RDSTATION_EXPIRATION_TIME'] = expires_in
+        if response.status_code == 200:
+            access_token = response.json()['access_token']
+            refresh_token = response.json()['refresh_token']
+            expires_in = str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
 
-        return Response({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
-    
-    else: return Response({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_400_BAD_REQUEST)
+            # Guarda os tokens no arquivo .env
+            os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
+            os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
+            os.environ['RDSTATION_EXPIRES_IN'] = expires_in
+
+            return Response({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_400_BAD_REQUEST)
