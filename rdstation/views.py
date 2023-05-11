@@ -1,5 +1,6 @@
-import requests
 import os
+import json
+import requests
 from datetime import datetime
 from dotenv import load_dotenv
 from urllib.parse import urlencode
@@ -22,44 +23,50 @@ def webhook(request):
     
     # Se o método da requisição é POST processa os dados recebidos
     elif request.method == 'POST':
-        print(request.data)
-        data = request.data
-        leads = data["leads"]
+        try:
+            request_body = request.body.decode('utf-8')
+            print("request_body: " + request_body)
+            json_data = json.loads(request_body)
+            leads = json_data.get('leads')
+            print("json_data: " + json_data)
 
-        # Obtém os tokens da API de variáveis de ambiente
-        API_TOKEN = os.environ.get("API_TOKEN")
-        COMPANY_DOMAIN = os.environ.get("COMPANY_DOMAIN")
-        pipedrive_url = "https://{}.pipedrive.com".format(COMPANY_DOMAIN)
+            # Obtém os tokens da API de variáveis de ambiente
+            API_TOKEN = os.environ.get("API_TOKEN")
+            COMPANY_DOMAIN = os.environ.get("COMPANY_DOMAIN")
+            pipedrive_url = "https://{}.pipedrive.com".format(COMPANY_DOMAIN)
 
-        for lead in leads:
-            # Cria uma instância do cliente do Pipedrive com a URL da API
-            pipedrive = PipedriveClient(domain=pipedrive_url)
-            pipedrive.set_api_token(API_TOKEN)
+            for lead in leads:
+                # Cria uma instância do cliente do Pipedrive com a URL da API
+                pipedrive = PipedriveClient(domain=pipedrive_url)
+                pipedrive.set_api_token(API_TOKEN)
 
-            # Cria uma pessoa no Pipedrive com os dados do lead
-            response = pipedrive.persons.create_person({
-                "name": lead["name"],
-                "email": lead["email"],
-                "phone": [{"value": lead["personal_phone"]}],
-                "visible_to": "3"
-            })
+                # Cria uma pessoa no Pipedrive com os dados do lead
+                response = pipedrive.persons.create_person({
+                    "name": lead["name"],
+                    "email": lead["email"],
+                    "phone": [{"value": lead["personal_phone"]}],
+                    "visible_to": "3"
+                })
 
-            if not response['success']:
-                return Response({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            personId = response['data']['id']
+                if not response['success']:
+                    return Response({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+                personId = response['data']['id']
 
-            # Cria um negócio (deal) no Pipedrive relacionado à pessoa criada
-            response = pipedrive.deals.create_deal({
-                "title": "Negócio gerado pelo RD Station",
-                "person_id": personId,
-                "status": "open"
-            })
+                # Cria um negócio (deal) no Pipedrive relacionado à pessoa criada
+                response = pipedrive.deals.create_deal({
+                    "title": "Negócio gerado pelo RD Station",
+                    "person_id": personId,
+                    "status": "open"
+                })
 
-            if not response['success']:
-                return Response({"message": "Error when creating Pipedrive deal"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                if not response['success']:
+                    return Response({"message": "Error when creating Pipedrive deal"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print(e)
+            return Response({"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def oauth_refresh():
     client_id = os.environ.get("client_id")
