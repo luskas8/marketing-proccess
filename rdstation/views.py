@@ -22,7 +22,7 @@ def webhook(request):
     
     # Se o método da requisição é POST processa os dados recebidos
     elif request.method == 'POST':
-        print(request.text)
+        print(request.data)
         data = request.data
         leads = data["leads"]
 
