@@ -27,7 +27,8 @@ def webhook(request):
             request_body = request.body.decode('utf-8')
             print("request_body: " + request_body)
             leads = json.loads(request_body)['leads']
-            print("leads: " + leads)
+            print("leads:")
+            print(leads)
 
             # Obtém os tokens da API de variáveis de ambiente
             API_TOKEN = os.environ.get("API_TOKEN")
