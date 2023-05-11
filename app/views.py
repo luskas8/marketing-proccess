@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from rdstation import lead
+
 from .forms import ContactForm
 
-from rdstation import lead
 
 def index(request):
     return HttpResponse("Hello, world.")

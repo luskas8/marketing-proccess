@@ -1,15 +1,18 @@
-import os
 import json
-import requests
+import os
 from datetime import datetime
-from dotenv import load_dotenv
 from urllib.parse import urlencode
-from django.shortcuts import render, redirect
+
+import requests
 from django.http import HttpResponse
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.shortcuts import redirect, render
+from dotenv import load_dotenv
+from pipedrive.client import Client as PipedriveClient
+from rest_framework import status
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import status
 
 load_dotenv()
 
