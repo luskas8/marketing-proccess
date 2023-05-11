@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'rdstation',
+    'pipedrivecrm',
     'rest_framework',
 ]
 
