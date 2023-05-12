@@ -9,6 +9,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from django.http import JsonResponse
 
 from app.sendmail import sendmail
 from rdstation import lead
@@ -30,13 +31,13 @@ e75f615cb8aac7c990d023d3df74aea7c0306817 - logradouro
 @permission_classes([AllowAny])
 def webhook_deal(request):
     if request.method == 'GET':
-        return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
+        return JsonResponse({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
         request_body = json.loads(request.body.decode('utf-8'))
 
         if (request_body['retry'] > 1):
-            return Response({"message": "We know, stop!"}, status=status.HTTP_200_OK)
+            return JsonResponse({"message": "We know, stop!"}, status=status.HTTP_200_OK)
 
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
@@ -45,23 +46,26 @@ def webhook_deal(request):
             try:
                 url = "https://api.pipedrive.com/v1/persons/{}/?api_token={}".format(personID, api_token)
                 response = requests.get(url)
+                response_data = response.json()
 
-                if not response['success']:
-                    return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                if not response_data['success']:
+                    return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-                personEmail = response['data']['email'][0]['value']
-                personName = response['data']['name']
-                sendmail(personEmail, "Bem-vindo " + personName, "<p>Para continuar por favor preencha esse formulário:</p><p>https://www.luskas8.xyx/forms/processo?email="+ urlencode(personEmail) +"</p>")
+                personEmail = response_data['data']['email'][0]['value']
+                personName = response_data['data']['name']
+                subject = "Bem-vindo {}".format(personName)
+                link = "https://www.luskas8.xyx/forms/processo?email={}".format(urlencode(personEmail))
+                sendmail(personEmail, subject, "<p>Para continuar por favor preencha esse formulário:</p><p>" + link + "</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)
 
                 if RDresponse == 200:
-                    return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
+                    return JsonResponse({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
                 
-                return Response({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
+                return JsonResponse({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
 
             except Exception as e:
                 print(e)
-                return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -70,9 +74,9 @@ def webhook_deal(request):
 @permission_classes([AllowAny])
 def webhook_person(request):
     if request.method == 'GET':
-        return Response({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
+        return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
         request_body = json.loads(request.body.decode('utf-8'))
     
-    return Response({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
+    return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
