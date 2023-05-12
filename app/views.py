@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from rdstation import lead
 
-from .forms import ContactForm, AdditionalInfoForm
+from .forms import ContactForm, AddcionalInfoForm
 
 
 def index(request):
@@ -38,7 +38,7 @@ def contact_view(request):
 
 def additional_info(request):
     if request.method == "POST":
-        form = AdditionalInfoForm(request.POST)
+        form = AddcionalInfoForm(request.POST)
 
         if form.is_valid():
             # Processar o formulário e enviar a mensagem
@@ -54,7 +54,7 @@ def additional_info(request):
         return render(request, 'app/thanks.html', { 'message': "Muito bem, estamos muito contentes pelo seu interesse!" })
     
     else:
-        form = AdditionalInfoForm()
+        form = AddcionalInfoForm()
     
     return render(request, 'app/info.html', {'form': form, 'error': False})
 
