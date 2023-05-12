@@ -69,7 +69,7 @@ def webhook_deal(request):
                 print(e)
                 return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
