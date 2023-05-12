@@ -37,6 +37,7 @@ def webhook_deal(request):
 
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
+            print(request_body['current']['person_id'])
             personID = request_body['current']['person_id']
             response = requests.get("https://api.pipedrive.com/v1/persons/" + str(personID) + "?api_token=" + api_token)
 
