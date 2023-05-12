@@ -37,14 +37,11 @@ def webhook_deal(request):
 
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
-            personID = str(request_body['current']['person_id'])
-            print(personID)
-            print(request_body['current']['person_id'])
-            print(type(request_body['current']['person_id']))
-            print(type(personID))
+            personID = request_body['current']['person_id']
 
             try:
-                response = requests.get("https://api.pipedrive.com/v1/persons/" + personID + "?api_token=" + api_token)
+                url = "https://api.pipedrive.com/v1/persons/" + personID + "/?api_token=" + api_token
+                response = requests.get(url)
 
                 if not response['success']:
                     return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
