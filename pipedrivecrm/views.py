@@ -37,20 +37,26 @@ def webhook_deal(request):
 
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
-            personID = request_body['current']['person_id']
-            response = requests.get("https://api.pipedrive.com/v1/persons/" + personID + "?api_token=" + api_token)
+            personID = str(request_body['current']['person_id'])
+            try:
+                response = requests.get("https://api.pipedrive.com/v1/persons/" + personID + "?api_token=" + api_token)
 
-            if not response['success']:
+                if not response['success']:
+                    return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+                personEmail = response = response['data']['email'][0]['value']
+                personName = response = response['data']['name']
+                sendmail(personEmail, "Bem-vindo " + personName, "<p>Para continuar por favor preencha esse formulário:</p><p>https://www.luskas8.xyx/forms/processo?email="+ urlencode(personEmail) +"</p>")
+                RDresponse = lead.funnel_lead(person_email=personEmail)
+
+                if RDresponse == 200:
+                    return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
+                
+                return Response({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
+                
+            except Exception as e:
+                print(e)
                 return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            personEmail = response = response['data']['email'][0]['value']
-            personName = response = response['data']['name']
-            sendmail(personEmail, "Bem-vindo " + personName, "<p>Para continuar por favor preencha esse formulário:</p><p>https://www.luskas8.xyx/forms/processo?email="+ urlencode(personEmail) +"</p>")
-            RDresponse = lead.funnel_lead(person_email=personEmail)
-
-            if RDresponse == 200:
-                return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
-            
-            return Response({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
