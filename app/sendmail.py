@@ -18,5 +18,5 @@ def sendmail(to_email, subject, content):
         if response.status_code == 202:
             return True
     except Exception as e:
-        print(e.message)
+        print(e)
         return False
