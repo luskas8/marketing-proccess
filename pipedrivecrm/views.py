@@ -38,6 +38,11 @@ def webhook_deal(request):
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
             personID = str(request_body['current']['person_id'])
+            print(personID)
+            print(request_body['current']['person_id'])
+            print(type(request_body['current']['person_id']))
+            print(type(personID))
+
             try:
                 response = requests.get("https://api.pipedrive.com/v1/persons/" + personID + "?api_token=" + api_token)
 
@@ -53,7 +58,7 @@ def webhook_deal(request):
                     return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
                 
                 return Response({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
-                
+
             except Exception as e:
                 print(e)
                 return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
