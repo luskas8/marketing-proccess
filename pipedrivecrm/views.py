@@ -35,12 +35,15 @@ def webhook_deal(request):
     elif request.method == 'POST':
         request_body = json.loads(request.body.decode('utf-8'))
 
+        if (request_body['retry'] > 1):
+            return Response({"message": "We know, stop!"}, status=status.HTTP_200_OK)
+
         if request_body['meta']['action'] == 'added':
             api_token = os.environ.get('PIPEDRIVE_API_KEY')
             personID = request_body['current']['person_id']
 
             try:
-                url = "https://api.pipedrive.com/v1/persons/" + personID + "/?api_token=" + api_token
+                url = "https://api.pipedrive.com/v1/persons/" + str(personID) + "/?api_token=" + api_token
                 response = requests.get(url)
 
                 if not response['success']:
