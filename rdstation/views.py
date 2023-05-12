@@ -28,10 +28,7 @@ def webhook(request):
     elif request.method == 'POST':
         try:
             request_body = request.body.decode('utf-8')
-            print("request_body: " + request_body)
             leads = json.loads(request_body)['leads']
-            print("leads:")
-            print(leads)
 
             # Obtém os tokens da API de variáveis de ambiente
             API_TOKEN = os.environ.get("API_TOKEN")
@@ -55,16 +52,6 @@ def webhook(request):
                     return Response({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 personId = response['data']['id']
-
-                # Cria um negócio (deal) no Pipedrive relacionado à pessoa criada
-                response = pipedrive.deals.create_deal({
-                    "title": "Negócio gerado pelo RD Station",
-                    "person_id": personId,
-                    "status": "open"
-                })
-
-                if not response['success']:
-                    return Response({"message": "Error when creating Pipedrive deal"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
         except Exception as e:
