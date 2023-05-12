@@ -43,7 +43,7 @@ def webhook_deal(request):
             personID = request_body['current']['person_id']
 
             try:
-                url = "https://api.pipedrive.com/v1/persons/" + str(personID) + "/?api_token=" + api_token
+                url = "https://api.pipedrive.com/v1/persons/{}/?api_token={}".format(personID, api_token)
                 response = requests.get(url)
 
                 if not response['success']:
