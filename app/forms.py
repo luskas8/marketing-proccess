@@ -51,3 +51,57 @@ class ContactForm(forms.Form):
             'max_decimal_places': 'Telefones não tem mais que isso de dígitos.',
         }
     )
+
+class AddcionalInfoForm(forms.Form):
+    email = forms.CharField(
+        widget = forms.HiddenInput(),
+        required = False
+    )
+
+    job_title = forms.CharField(
+        label='Cargo',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque seu cargo nesse campo.',
+        }
+    )
+
+    country = forms.CharField(
+        label='País',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque seu país nesse campo.',
+        }
+    )
+
+    zip_code = forms.DecimalField(
+        label='CEP',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque seu CEP nesse campo.',
+        }
+    )
+
+    state = forms.CharField(
+        label='Estado',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque seu estado nesse campo.',
+        }
+    )
+
+    city = forms.CharField(
+        label='Cidade',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque sua cidade nesse campo.',
+        }
+    )
+
+    address = forms.CharField(
+        label='Logradouro',
+        error_messages={
+            'required': 'Este campo é obrigatório.',
+            'invalid': 'Coloque seu endereço nesse campo.',
+        }
+    )

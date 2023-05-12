@@ -53,7 +53,7 @@ def webhook(request):
                 
                 personId = response['data']['id']
 
-            return Response({"message": "Success, created persons and deals at Pipedrive"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Success, created persons at Pipedrive"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
             return Response({"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
