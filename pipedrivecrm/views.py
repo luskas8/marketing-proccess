@@ -47,12 +47,14 @@ def webhook_deal(request):
                 url = "https://api.pipedrive.com/v1/persons/{}/?api_token={}".format(personID, api_token)
                 response = requests.get(url)
                 response_data = response.json()
-
+                print(response_data)
+                print(response)
                 if not response_data['success']:
-                    return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_201_CREATED)
                 
                 personEmail = response_data['data']['email'][0]['value']
                 personName = response_data['data']['name']
+                print(personEmail, personName)
                 subject = "Bem-vindo {}".format(personName)
                 link = "https://www.luskas8.xyx/forms/processo?email={}".format(urlencode(personEmail))
                 sendmail(personEmail, subject, "<p>Para continuar por favor preencha esse formulário:</p><p>" + link + "</p>")
