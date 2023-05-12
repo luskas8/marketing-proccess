@@ -49,8 +49,8 @@ def webhook_deal(request):
                 if not response['success']:
                     return Response({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-                personEmail = response = response['data']['email'][0]['value']
-                personName = response = response['data']['name']
+                personEmail = response['data']['email'][0]['value']
+                personName = response['data']['name']
                 sendmail(personEmail, "Bem-vindo " + personName, "<p>Para continuar por favor preencha esse formulário:</p><p>https://www.luskas8.xyx/forms/processo?email="+ urlencode(personEmail) +"</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)
 
