@@ -90,7 +90,7 @@ def webhook_person(request):
                 "cf_pipedrive_id": request_body['current']['id'],
                 "name": request_body['current']['name'],
                 "email": request_body['current']['email'][0]['value'],
-                "phone": request_body['current']['phone'][0]['value'],
+                "personal_phone": request_body['current']['phone'][0]['value'],
                 "cf_cep": request_body['current']['05910b25ee41b60ba64ca680ff8a7a60fcf05d0d'],
                 "country": request_body['current']['951aabc418ef796f4b7996ee92cd0aa44fb3b07b'],
                 "state": request_body['current']['1485bc05fc2ae3271004222bd8b803a122623ac1'],
