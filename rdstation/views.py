@@ -4,16 +4,14 @@ from datetime import datetime
 from urllib.parse import urlencode
 
 import requests
-from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from dotenv import load_dotenv
 from pipedrive.client import Client as PipedriveClient
 from rest_framework import status
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-load_dotenv()
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
@@ -21,7 +19,7 @@ load_dotenv()
 def webhook(request):
     # Se o método da requisição é GET e retorna uma mensagem de sucesso caso o webhook esteja funcionando
     if request.method == 'GET':
-        return JsonResponse({"message": "RDStation webhooks working"}, status=status.HTTP_200_OK)
+        return Response({"message": "RDStation webhooks working"}, status=status.HTTP_200_OK)
     
     # Se o método da requisição é POST processa os dados recebidos
     elif request.method == 'POST':
@@ -48,14 +46,14 @@ def webhook(request):
                 })
 
                 if not response['success']:
-                    return JsonResponse({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    return Response({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 personId = response['data']['id']
 
-            return JsonResponse({"message": "Success, created persons at Pipedrive"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Success, created persons at Pipedrive"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
-            return JsonResponse({"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def oauth_refresh():
     client_id = os.environ.get("client_id")
@@ -81,6 +79,12 @@ def oauth_refresh():
             access_token = response.json()['access_token']
             refresh_token = response.json()['refresh_token']
             expires_in =  str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
+
+            # Guarda os tokens no arquivo .env
+            os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
+            os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
+            os.environ['RDSTATION_EXPIRES_IN'] = expires_in
+            
             return status.HTTP_200_OK
     except Exception as e:
         print(e)
@@ -94,7 +98,7 @@ def oauth(request):
     redirect_uri = os.environ.get("redirect_uri")
 
     if not client_id or not redirect_uri:
-        return JsonResponse({"message": "Missing authorization credencials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Missing authorization credencials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Conntroi a URL de autorização
     params = {
@@ -103,7 +107,7 @@ def oauth(request):
     }
     authorization_url = 'https://api.rd.services/auth/dialog/authorize?' + urlencode(params)
 
-    return JsonResponse({"message": "OAuth request done"}, status=status.HTTP_200_OK)
+    return Response({"message": "OAuth request done"}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([])
@@ -136,7 +140,7 @@ def oauth_callback(request):
             os.environ['RDSTATION_REFRESH_TOKEN'] = refresh_token
             os.environ['RDSTATION_EXPIRES_IN'] = expires_in
 
-            return JsonResponse({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
+            return Response({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
-        return JsonResponse({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_401_UNAUTHORIZED)

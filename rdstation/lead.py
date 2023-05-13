@@ -1,5 +1,6 @@
 import json
 import os
+from time import sleep
 from datetime import datetime
 
 import requests
@@ -55,6 +56,7 @@ def funnel_lead(person_email, attempt=0) -> int:
         print("funnel_lead error access token not found or expired")
         views.oauth_refresh()
         print(f"funnel_lead exit attempt - {attempt}")
+        sleep(5)
         return funnel_lead(person_email, attempt + 1)
     
     print("funnel_lead success access token found")
