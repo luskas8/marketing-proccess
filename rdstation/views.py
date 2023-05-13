@@ -63,6 +63,10 @@ def oauth_refresh():
     client_secret = os.environ.get("client_secret")
     refresh_token = os.environ.get("refresh_token")
 
+    if not refresh_token:
+        oauth()
+        return status.HTTP_200_OK
+
     # Código para obter um novo access token
     token_url = 'https://api.rd.services/auth/token'
     payload = {
