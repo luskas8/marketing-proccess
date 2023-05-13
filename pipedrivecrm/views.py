@@ -55,9 +55,10 @@ def webhook_deal(request):
                 subject = f"Bem-vindo {personName}!"
 
                 params = {
-                    "email": personEmail
+                    "email": personEmail,
+                    "personID": personID
                 }
-                link = f"https://www.luskas8.xyx/forms/processo?{urlencode(params)}"
+                link = f"https://luskas8.xyz/forms/proccess/?{urlencode(params)}"
 
                 sendmail(personEmail, subject, f"<p>Para continuar por favor preencha esse formulário:</p><p>{link}</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)

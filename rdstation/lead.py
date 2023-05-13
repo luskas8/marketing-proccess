@@ -41,8 +41,10 @@ def create_lead(name, email, ddd, phone) -> int:
         return 400
 
 def funnel_lead(person_email, attempt=0) -> int:
+    print(f"funnel_lead enter attempt - {attempt}")
     # Caso já tenha tentato mais de 3 vezes, retorna erro
     if attempt > 3:
+        print("funel_lead attempt error too much attempts")
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
@@ -50,9 +52,12 @@ def funnel_lead(person_email, attempt=0) -> int:
 
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
     if not access_token or int(expires_in) < int(datetime.timestamp(datetime.now())):
+        print("funnel_lead error access token not found or expired")
         views.oauth_refresh()
+        print(f"funnel_lead exit attempt - {attempt}")
         return funnel_lead(person_email, attempt + 1)
     
+    print("funnel_lead success access token found")
     url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
@@ -69,7 +74,7 @@ def funnel_lead(person_email, attempt=0) -> int:
     try:
         # Tentativa de atualizar o lead para lead qualificado no RDStation
         response = requests.post(url, json=payload, headers=headers)
-
+        print(response.status_code, response.json())
         if response.status_code == 200:
             return status.HTTP_201_CREATED
         
