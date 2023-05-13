@@ -104,7 +104,7 @@ def webhook_person(request):
             personId = request_body['meta']['id']
             uuid = request_body['previous']['979ea8099383f9abd2dec402ba39580d32cb4110']
             print(personId, uuid)
-            # lead.delete(uuid)
+            lead.delete(uuid)
         
     
     return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
