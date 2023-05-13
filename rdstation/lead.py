@@ -53,7 +53,7 @@ def funnel_lead(person_email, attempt=0) -> int:
         views.oauth_refresh()
         return create_lead(person_email, attempt + 1)
     
-    url = "https://api.rd.services/platform/contacts/email:" + person_email + "/funnels/default"
+    url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
         "lifecycle_stage": "'Qualified Lead",
@@ -63,7 +63,7 @@ def funnel_lead(person_email, attempt=0) -> int:
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
-        authorization: "Bearer " + access_token
+        authorization: f"Bearer {access_token}"
     }
 
     try:

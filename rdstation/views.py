@@ -68,8 +68,7 @@ def oauth_refresh():
     payload = {
         'client_id': client_id,
         'client_secret': client_secret,
-        'code': authorization_code,
-        'redirect_uri': redirect_uri,
+        'refresh_token': refresh_token
     }
     try:
         response = requests.post(token_url, data=payload)
@@ -78,10 +77,10 @@ def oauth_refresh():
             access_token = response.json()['access_token']
             refresh_token = response.json()['refresh_token']
             expires_in =  str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
-            return True
+            return status.HTTP_200_OK
     except Exception as e:
         print(e)
-        return False
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 @api_view(['POST'])
 @authentication_classes([])

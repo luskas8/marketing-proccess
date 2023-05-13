@@ -8,7 +8,6 @@ from rest_framework import status
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from django.http import JsonResponse
 
 from app.sendmail import sendmail
@@ -40,23 +39,22 @@ def webhook_deal(request):
             return JsonResponse({"message": "We know, stop!"}, status=status.HTTP_200_OK)
 
         if request_body['meta']['action'] == 'added':
-            api_token = os.environ.get('PIPEDRIVE_API_KEY')
+            api_token = os.environ.get('API_TOKEN')
             personID = request_body['current']['person_id']
 
             try:
-                url = "https://api.pipedrive.com/v1/persons/{}/?api_token={}".format(personID, api_token)
+                url = "https://api.pipedrive.com/v1/persons/{}?api_token={}".format(personID, api_token)
+                print(url)
                 response = requests.get(url)
                 response_data = response.json()
-                print(response_data)
-                print(response)
                 if not response_data['success']:
                     return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_201_CREATED)
                 
                 personEmail = response_data['data']['email'][0]['value']
                 personName = response_data['data']['name']
-                print(personEmail, personName)
-                subject = "Bem-vindo {}".format(personName)
-                link = "https://www.luskas8.xyx/forms/processo?email={}".format(urlencode(personEmail))
+                subject = f"Bem-vindo {personName}!"
+                link = f"https://www.luskas8.xyx/forms/processo?email={urlencode(personEmail)}"
+
                 sendmail(personEmail, subject, "<p>Para continuar por favor preencha esse formulário:</p><p>" + link + "</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)
 
@@ -69,7 +67,7 @@ def webhook_deal(request):
                 print(e)
                 return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
+    return JsonResponse({"message": "Pipedrive webhook deal working, no actions done"}, status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
