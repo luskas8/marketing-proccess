@@ -25,7 +25,7 @@ def contact_view(request):
             # 2. Criar um person no Pipedrive:
             #   como faz uma conversão de lead no RDStation, o webhook vai ser chamado e vai criar um person no Pipedrive
             
-            if response_status == 201:
+            if response_status != 201:
                 # Retornar uma resposta de erro
                 return render(request, 'app/contact.html', {'form': form, 'error': True})
 

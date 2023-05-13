@@ -27,7 +27,7 @@ def create(name, email, ddd, phone) -> int:
             "name": name,
             "email": email,
             "personal_phone": str(ddd) + " " + str(phone),
-            "cf_pipedrive_id": 0,
+            "cf_pipedrive_id": "",
             "cf_cep": "",
             "country": "",
             "city": "",
@@ -45,10 +45,11 @@ def create(name, email, ddd, phone) -> int:
     try:
         response = requests.post(url, json=payload, headers=headers)
 
-        if response.status_code == 200:
-            return 201
+        if response.status_code != 200:
+            print(response.status_code, response.json())
+            return 400
         
-        return False
+        return 201
     except Exception as e:
         print(e)
         return 400
