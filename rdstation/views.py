@@ -63,7 +63,8 @@ def oauth_refresh():
     refresh_token = os.environ.get("refresh_token")
 
     if not refresh_token:
-        requests.post("hppts://luskas8.xyz/api/rdstation/oauth/")
+        print("Missing refresh token")
+        requests.post("https://luskas8.xyz/api/rdstation/oauth/")
         return status.HTTP_200_OK
 
     # Código para obter um novo access token
@@ -93,7 +94,7 @@ def oauth(request):
     redirect_uri = os.environ.get("redirect_uri")
 
     if not client_id or not redirect_uri:
-        return JsonResponse("Missing authorization credencials", status=status.HTTP_401_BAD_REQUEST)
+        return JsonResponse({"message": "Missing authorization credencials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     # Conntroi a URL de autorização
     params = {
@@ -102,7 +103,7 @@ def oauth(request):
     }
     authorization_url = 'https://api.rd.services/auth/dialog/authorize?' + urlencode(params)
 
-    return JsonResponse("OAuth request done", status=status.HTTP_200_OK)
+    return JsonResponse({"message": "OAuth request done"}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([])
@@ -138,4 +139,4 @@ def oauth_callback(request):
             return JsonResponse({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
     except Exception as e:
         print(e)
-        return JsonResponse({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'message':'Failed to retrieve access tokeny'}, status=status.HTTP_401_UNAUTHORIZED)
