@@ -144,11 +144,12 @@ def oauth_callback(request):
             print(response.json())
             return JsonResponse({'message': "Something went wrong"}, status=response.status_code)
 
-        return JsonResponse({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
         expires_in = str(response.json()['expires_in'] + int(datetime.timestamp(datetime.now())))
         print(response.json())
+        
+        return JsonResponse({'message':'OAuth flow completed successfully'}, status=status.HTTP_200_OK)
         
         # Guarda os tokens no arquivo .env
         os.environ['RDSTATION_ACCESS_TOKEN'] = access_token
