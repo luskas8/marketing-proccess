@@ -62,9 +62,8 @@ def oauth_refresh():
     refresh_token = os.environ.get("refresh_token")
 
     if not refresh_token:
-        print("Missing refresh token")
-        requests.post("https://luskas8.xyz/api/rdstation/oauth/")
-        return status.HTTP_200_OK
+        print("Missing refresh token, please contact the administrator")
+        return status.HTTP_401_UNAUTHORIZED
 
     # Código para obter um novo access token
     token_url = 'https://api.rd.services/auth/token'
@@ -94,22 +93,26 @@ def oauth_refresh():
         print(e)
         return status.HTTP_500_INTERNAL_SERVER_ERROR
 
-@api_view(['POST'])
+@api_view(['GET'])
 @authentication_classes([])
 @permission_classes([AllowAny])
 def oauth(request):
+    access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
+    expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
+    timestamp = int(datetime.timestamp(datetime.now()))
+
+    if access_token and expires_in and int(expires_in) > timestamp:
+        return JsonResponse({"message": "Already has a valid token"}, status=status.HTTP_200_OK)
+
     client_id = os.environ.get("client_id")
     redirect_uri = os.environ.get("redirect_uri")
 
     if not client_id or not redirect_uri:
         return JsonResponse({"message": "Missing authorization credencials"}, status=status.HTTP_401_UNAUTHORIZED)
-
+    
     # Conntroi a URL de autorização
-    params = {
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
-    }
-    authorization_url = 'https://api.rd.services/auth/dialog/authorize?' + urlencode(params)
+    token_url = f'https://api.rd.services/auth/dialog?client_id={client_id}&redirect_uri={redirect_uri}'
+    print(token_url)
 
     return JsonResponse({"message": "OAuth request done"}, status=status.HTTP_200_OK)
 

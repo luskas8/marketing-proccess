@@ -50,9 +50,10 @@ def funnel_lead(person_email, attempt=0) -> int:
     
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
     expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
+    timestamp = int(datetime.timestamp(datetime.now()))
 
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
-    if not access_token or int(expires_in) < int(datetime.timestamp(datetime.now())):
+    if not access_token or not expires_in or int(expires_in) <= timestamp:
         print("funnel_lead error access token not found or expired")
         views.oauth_refresh()
         print(f"funnel_lead exit attempt - {attempt}")
