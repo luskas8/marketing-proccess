@@ -43,9 +43,9 @@ def webhook(request):
             leads = json.loads(request_body)['leads']
 
             for lead in leads:
-                lead_uuid = lead['uuid']
+                uuid = lead['uuid']
                 data = {
-                    "979ea8099383f9abd2dec402ba39580d32cb4110": lead_uuid,
+                    "979ea8099383f9abd2dec402ba39580d32cb4110": uuid,
                     "name": lead["name"],
                     "email": lead["email"],
                     "phone": [{"value": lead["personal_phone"]}],
@@ -57,7 +57,7 @@ def webhook(request):
                     return JsonResponse({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
                 # Atualiza lead no RDStation com o id da pessoa criada no Pipedrive
-                rdlead.update({ "uuid": lead_uuid, "cf_pipedrive_id": personId }, True)
+                rdlead.update({ "cf_pipedrive_id": personId }, uuid)
 
             return JsonResponse({"message": "Success, created persons at Pipedrive"}, status=status.HTTP_201_CREATED)
         except Exception as e:

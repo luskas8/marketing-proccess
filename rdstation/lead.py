@@ -90,19 +90,16 @@ def funnel(person_email) -> int:
         
     return status.HTTP_200_OK
 
-def update(data, byId=False) -> int:
+def update(data, uuid) -> int:
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
     expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
     timestamp = int(datetime.timestamp(datetime.now()))
-    url = ""
+
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
     if not access_token or not expires_in or int(expires_in) <= timestamp:
         views.oauth_refresh()
-    
-    if not byId:
-        url = f"https://api.rd.services/platform/contacts/email:{data['email']}"
-    else:
-        url = f"https://api.rd.services/platform/contacts/uuid:{data['uuid']}"
+
+    url = f"https://api.rd.services/platform/contacts/uuid:{uuid}"
 
     headers = {
         "accept": "application/json",

@@ -85,8 +85,8 @@ def webhook_person(request):
         
         if request_body['meta']['action'] == 'updated':
             # todo: adicionar campos de CPF e CNPJ
+            uuid = request_body['current']['979ea8099383f9abd2dec402ba39580d32cb4110']
             data = {
-                "uuid": request_body['current']['979ea8099383f9abd2dec402ba39580d32cb4110'],
                 "cf_pipedrive_id": request_body['current']['id'],
                 "name": request_body['current']['name'],
                 "email": request_body['current']['email'][0]['value'],
@@ -98,6 +98,6 @@ def webhook_person(request):
                 "cf_logradouro": request_body['current']['e75f615cb8aac7c990d023d3df74aea7c0306817'],
                 "job_title": request_body['current']['c1ad668236989f4f735179c1594c3eb8fb5f3bf3']
             }
-            lead.update(data, True)
+            lead.update(data, uuid)
         
     return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
