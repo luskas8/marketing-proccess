@@ -1,3 +1,4 @@
+import os
 from pipedrive.client import Client as PipedriveClient
 from rest_framework import status
 
