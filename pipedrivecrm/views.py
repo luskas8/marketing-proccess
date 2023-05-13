@@ -88,9 +88,8 @@ def webhook_person(request):
         print(request_body)
 
         if (request_body['retry'] > 1):
-            # {"message": "We know, stop!"}
-            return JsonResponse(status=status.HTTP_200_OK)
+            return JsonResponse({"message": "We know, stop!"}, status=status.HTTP_200_OK)
         
-
+        
     
-    return JsonResponse(status=status.HTTP_200_OK)
+    return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
