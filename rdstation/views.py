@@ -63,7 +63,7 @@ def oauth_refresh():
     refresh_token = os.environ.get("refresh_token")
 
     if not refresh_token:
-        oauth()
+        requests.post("hppts://luskas8.xyz/api/rdstation/oauth/")
         return status.HTTP_200_OK
 
     # Código para obter um novo access token
@@ -88,7 +88,7 @@ def oauth_refresh():
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def oauth(request=None):
+def oauth(request):
     client_id = os.environ.get("client_id")
     redirect_uri = os.environ.get("redirect_uri")
 
