@@ -1,5 +1,6 @@
 import json
 import os
+from time import sleep
 from datetime import datetime
 
 import requests
@@ -40,39 +41,35 @@ def create_lead(name, email, ddd, phone) -> int:
         print(e)
         return 400
 
-def funnel_lead(person_email, attempt=0) -> int:
-    # Caso já tenha tentato mais de 3 vezes, retorna erro
-    if attempt > 3:
-        return status.HTTP_500_INTERNAL_SERVER_ERROR
-    
+def funnel_lead(person_email) -> int:    
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
     expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
+    timestamp = int(datetime.timestamp(datetime.now()))
 
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
-    if not access_token or int(expires_in) < int(datetime.timestamp(datetime.now())):
+    if not access_token or not expires_in or int(expires_in) <= timestamp:
         views.oauth_refresh()
-        return create_lead(person_email, attempt + 1)
     
-    url = "https://api.rd.services/platform/contacts/email:" + person_email + "/funnels/default"
+    url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
-        "lifecycle_stage": "'Qualified Lead",
-        "contact_owner_email": "null"
+        "lifecycle_stage": "Qualified Lead",
+        "opportunity": False
     }
 
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
-        authorization: "Bearer " + access_token
+        "authorization": f"Bearer {access_token}"
     }
 
     try:
         # Tentativa de atualizar o lead para lead qualificado no RDStation
-        response = requests.post(url, json=payload, headers=headers)
-
+        response = requests.put(url, json=payload, headers=headers)
         if response.status_code == 200:
-            return status.HTTP_201_CREATED
+            return status.HTTP_200_OK
         
+        print(response.status_code, response.json())
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     except Exception as e:
         print(e)

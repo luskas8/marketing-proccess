@@ -42,6 +42,7 @@ def additional_info(request):
 
         if form.is_valid():
             # Processar o formulário e enviar a mensagem
+            personID = request.GET.get('personID')
             email = request.GET.get('email')
             job_title = form.cleaned_data['job_title']
             zip_code = form.cleaned_data['zip_code']
