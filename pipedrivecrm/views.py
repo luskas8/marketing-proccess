@@ -63,10 +63,11 @@ def webhook_deal(request):
                 sendmail(personEmail, subject, f"<p>Para continuar por favor preencha esse formulário:</p><p>{link}</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)
 
-                if RDresponse == 200:
-                    return JsonResponse({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
+                if RDresponse != 200:
+                    return JsonResponse({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
+                    
+                return JsonResponse({"message": "Pipedrive webhook deal working"}, status=status.HTTP_200_OK)
                 
-                return JsonResponse({"message": "It was not possible to update RDStation lead to a qualified lead, try by your self or contact the developers"}, status=status.HTTP_200_OK)
 
             except Exception as e:
                 print(e)
