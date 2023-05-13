@@ -20,7 +20,7 @@ def contact_view(request):
             phone = form.cleaned_data['phone']
 
             # 1. Criar um lead no RDStation
-            response_status = lead.create_lead(name, email, ddd, phone)
+            response_status = lead.create(name, email, ddd, phone)
 
             # 2. Criar um person no Pipedrive:
             #   como faz uma conversão de lead no RDStation, o webhook vai ser chamado e vai criar um person no Pipedrive
