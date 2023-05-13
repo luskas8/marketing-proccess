@@ -48,15 +48,14 @@ def funnel_lead(person_email) -> int:
 
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
     if not access_token or not expires_in or int(expires_in) <= timestamp:
-        print("funnel_lead error access token not found or expired")
         views.oauth_refresh()
     
     print("funnel_lead success access token found")
     url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
-        "lifecycle_stage": "qualified_lead",
-        "contact_owner_email": "null"
+        "lifecycle_stage": "Qualified Lead",
+        "opportunity": False
     }
 
     headers = {
@@ -67,11 +66,11 @@ def funnel_lead(person_email) -> int:
 
     try:
         # Tentativa de atualizar o lead para lead qualificado no RDStation
-        response = requests.post(url, json=payload, headers=headers)
-        print(response.status_code, response.json())
+        response = requests.put(url, json=payload, headers=headers)
         if response.status_code == 200:
-            return status.HTTP_201_CREATED
+            return status.HTTP_200_OK
         
+        print(response.status_code, response.json())
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     except Exception as e:
         print(e)
