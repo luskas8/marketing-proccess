@@ -43,8 +43,8 @@ def webhook_deal(request):
             personID = request_body['current']['person_id']
 
             try:
-                url = "https://api.pipedrive.com/v1/persons/{}?api_token={}".format(personID, api_token)
-                print(url)
+                url = f"https://api.pipedrive.com/v1/persons/{personID}?api_token={api_token}"
+
                 response = requests.get(url)
                 response_data = response.json()
                 if not response_data['success']:
@@ -53,9 +53,13 @@ def webhook_deal(request):
                 personEmail = response_data['data']['email'][0]['value']
                 personName = response_data['data']['name']
                 subject = f"Bem-vindo {personName}!"
-                link = f"https://www.luskas8.xyx/forms/processo?email={urlencode(personEmail)}"
 
-                sendmail(personEmail, subject, "<p>Para continuar por favor preencha esse formulário:</p><p>" + link + "</p>")
+                params = {
+                    "email": personEmail
+                }
+                link = f"https://www.luskas8.xyx/forms/processo?{urlencode(params)}"
+
+                sendmail(personEmail, subject, f"<p>Para continuar por favor preencha esse formulário:</p><p>{link}</p>")
                 RDresponse = lead.funnel_lead(person_email=personEmail)
 
                 if RDresponse == 200:

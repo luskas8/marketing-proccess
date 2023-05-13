@@ -51,7 +51,7 @@ def funnel_lead(person_email, attempt=0) -> int:
     # Caso não tenha access token ou o token tenha expirado, tenta obter um novo
     if not access_token or int(expires_in) < int(datetime.timestamp(datetime.now())):
         views.oauth_refresh()
-        return create_lead(person_email, attempt + 1)
+        return funnel_lead(person_email, attempt + 1)
     
     url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
