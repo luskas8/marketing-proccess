@@ -112,7 +112,6 @@ def oauth(request):
     
     # Conntroi a URL de autorização
     token_url = f'https://api.rd.services/auth/dialog?client_id={client_id}&redirect_uri={redirect_uri}'
-    print(token_url)
 
     return JsonResponse({"message": "OAuth request done"}, status=status.HTTP_200_OK)
 

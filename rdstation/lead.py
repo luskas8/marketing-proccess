@@ -50,7 +50,6 @@ def funnel_lead(person_email) -> int:
     if not access_token or not expires_in or int(expires_in) <= timestamp:
         views.oauth_refresh()
     
-    print("funnel_lead success access token found")
     url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
@@ -61,7 +60,7 @@ def funnel_lead(person_email) -> int:
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
-        authorization: f"Bearer {access_token}"
+        "authorization": f"Bearer {access_token}"
     }
 
     try:
