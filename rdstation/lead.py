@@ -64,7 +64,7 @@ def funnel_lead(person_email, attempt=0) -> int:
     url = f"https://api.rd.services/platform/contacts/email:{person_email}/funnels/default"
 
     payload = {
-        "lifecycle_stage": "'Qualified Lead",
+        "lifecycle_stage": "qualified_lead",
         "contact_owner_email": "null"
     }
 
