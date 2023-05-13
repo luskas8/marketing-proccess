@@ -71,7 +71,7 @@ def webhook_deal(request):
 
             except Exception as e:
                 print(e)
-                return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return JsonResponse({"message": "Pipedrive webhook deal working, but can't get persons data"}, status=status.HTTP_204_NO_CONTENT)
 
     return JsonResponse({"message": "Pipedrive webhook deal working, no actions done"}, status=status.HTTP_200_OK)
 
