@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 
 import requests
 from django.shortcuts import redirect, render
-from pipedrive.client import Client as PipedriveClient
 from rest_framework import status
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
@@ -13,6 +12,21 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.http import JsonResponse
 
+from pipedrivecrm import person
+from . import lead as rdlead
+
+
+'''
+
+979ea8099383f9abd2dec402ba39580d32cb4110 - uuid
+c1ad668236989f4f735179c1594c3eb8fb5f3bf3 - profissao
+05910b25ee41b60ba64ca680ff8a7a60fcf05d0d - cep
+951aabc418ef796f4b7996ee92cd0aa44fb3b07b - pais
+1485bc05fc2ae3271004222bd8b803a122623ac1 - estado
+8f8fc428ecec2187715f3597efaea6f41eabb169 - cidade
+e75f615cb8aac7c990d023d3df74aea7c0306817 - logradouro
+
+'''
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
@@ -28,28 +42,22 @@ def webhook(request):
             request_body = request.body.decode('utf-8')
             leads = json.loads(request_body)['leads']
 
-            # Obtém os tokens da API de variáveis de ambiente
-            API_TOKEN = os.environ.get("API_TOKEN")
-            COMPANY_DOMAIN = os.environ.get("COMPANY_DOMAIN")
-            pipedrive_url = "https://{}.pipedrive.com".format(COMPANY_DOMAIN)
-
             for lead in leads:
-                # Cria uma instância do cliente do Pipedrive com a URL da API
-                pipedrive = PipedriveClient(domain=pipedrive_url)
-                pipedrive.set_api_token(API_TOKEN)
-
-                # Cria uma pessoa no Pipedrive com os dados do lead
-                response = pipedrive.persons.create_person({
+                uuid = lead['uuid']
+                data = {
+                    "979ea8099383f9abd2dec402ba39580d32cb4110": uuid,
                     "name": lead["name"],
                     "email": lead["email"],
                     "phone": [{"value": lead["personal_phone"]}],
                     "visible_to": "3"
-                })
+                }
+                status_code, personId = person.create(data)
 
-                if not response['success']:
+                if status_code != 201:
                     return JsonResponse({"message": "Error when creating Pipedrive person"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
-                personId = response['data']['id']
+                # Atualiza lead no RDStation com o id da pessoa criada no Pipedrive
+                rdlead.update({ "cf_pipedrive_id": personId }, uuid)
 
             return JsonResponse({"message": "Success, created persons at Pipedrive"}, status=status.HTTP_201_CREATED)
         except Exception as e:
