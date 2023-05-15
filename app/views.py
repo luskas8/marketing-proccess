@@ -37,7 +37,7 @@ def contact_view(request):
 
     return render(request, 'app/contact.html', {'form': form, 'error': False})
 
-def additional_info(request, personId):
+def additional_info_view(request, personId):
     if request.method == "POST":
         form = AddcionalInfoForm(request.POST)
 
@@ -51,7 +51,7 @@ def additional_info(request, personId):
             address = form.cleaned_data['address']
 
             data = {
-                "05910b25ee41b60ba64ca680ff8a7a60fcf05d0d": zip_code,
+                "05910b25ee41b60ba64ca680ff8a7a60fcf05d0d": str(zip_code),
                 "951aabc418ef796f4b7996ee92cd0aa44fb3b07b": country,
                 "1485bc05fc2ae3271004222bd8b803a122623ac1": state,
                 "8f8fc428ecec2187715f3597efaea6f41eabb169": city,

@@ -10,7 +10,7 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 
 from pipedrivecrm import person
 from . import lead as rdlead
@@ -121,7 +121,7 @@ def oauth(request):
     # Conntroi a URL de autorização
     token_url = f'https://api.rd.services/auth/dialog?client_id={client_id}&redirect_uri={redirect_uri}'
 
-    return JsonResponse({"message": "OAuth request done"}, status=status.HTTP_200_OK)
+    return HttpResponseRedirect(redirect_to=token_url)
 
 @api_view(['GET'])
 @authentication_classes([])

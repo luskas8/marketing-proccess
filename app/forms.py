@@ -53,11 +53,6 @@ class ContactForm(forms.Form):
     )
 
 class AddcionalInfoForm(forms.Form):
-    email = forms.CharField(
-        widget = forms.HiddenInput(),
-        required = False
-    )
-
     job_title = forms.CharField(
         label='Cargo',
         error_messages={
