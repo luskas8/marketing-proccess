@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rdstation',
     'pipedrivecrm',
     'rest_framework',
+    'widget_tweaks',
 ]
 
 REST_FRAMEWORK = {

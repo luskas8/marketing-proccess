@@ -53,7 +53,7 @@ def webhook_deal(request):
                 personEmail = response_data['data']['email'][0]['value']
                 personName = response_data['data']['name']
                 subject = f"Bem-vindo {personName}!"
-                link = f"https://luskas8.xyz/forms/proccess/?personID={personID}"
+                link = f"https://luskas8.xyz/forms/proccess/{personID}"
 
                 sendmail(personEmail, subject, f"<p>Para continuar por favor preencha esse formulário:</p><p>{link}</p>")
                 RDresponse = lead.funnel(person_email=personEmail)
@@ -100,4 +100,11 @@ def webhook_person(request):
             }
             lead.update(data, uuid)
         
+        if request_body['meta']['action'] == 'deleted':
+            personId = request_body['meta']['id']
+            uuid = request_body['previous']['979ea8099383f9abd2dec402ba39580d32cb4110']
+            print(personId, uuid)
+            lead.delete(uuid)
+        
+    
     return JsonResponse({"message": "Pipedrive webhook person working"}, status=status.HTTP_200_OK)
