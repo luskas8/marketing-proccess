@@ -43,7 +43,6 @@ def additional_info_view(request, personId):
     if request.method == "POST":
         form = AddcionalInfoForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             # Processar o formulário e enviar a mensagem
             job_title = form.cleaned_data['job_title']
             zip_code = form.cleaned_data['zip_code']
@@ -51,6 +50,8 @@ def additional_info_view(request, personId):
             state = form.cleaned_data['state']
             city = form.cleaned_data['city']
             address = form.cleaned_data['address']
+            cpf = form.cleaned_data['cpf']
+            cnpj = form.cleaned_data['cnpj']
 
             data = {
                 "05910b25ee41b60ba64ca680ff8a7a60fcf05d0d": str(zip_code),
@@ -58,7 +59,9 @@ def additional_info_view(request, personId):
                 "1485bc05fc2ae3271004222bd8b803a122623ac1": state,
                 "8f8fc428ecec2187715f3597efaea6f41eabb169": city,
                 "e75f615cb8aac7c990d023d3df74aea7c0306817": address,
-                "c1ad668236989f4f735179c1594c3eb8fb5f3bf3": job_title
+                "c1ad668236989f4f735179c1594c3eb8fb5f3bf3": job_title,
+                "5700b737d526ec982fb457788a60000816c71fff": cpj,
+                "c0f2b6951407d4f1c627385d8b94951861c6f16d": cnpj
             }
             # Atualizar o person no Pipedrive
             status_code = person.update(data, personId)

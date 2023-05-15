@@ -21,6 +21,8 @@ c1ad668236989f4f735179c1594c3eb8fb5f3bf3 - profissao
 1485bc05fc2ae3271004222bd8b803a122623ac1 - estado
 8f8fc428ecec2187715f3597efaea6f41eabb169 - cidade
 e75f615cb8aac7c990d023d3df74aea7c0306817 - logradouro
+5700b737d526ec982fb457788a60000816c71fff - cpf
+c0f2b6951407d4f1c627385d8b94951861c6f16d - cnpj
 
 '''
 
@@ -96,7 +98,9 @@ def webhook_person(request):
                 "state": request_body['current']['1485bc05fc2ae3271004222bd8b803a122623ac1'],
                 "city": request_body['current']['8f8fc428ecec2187715f3597efaea6f41eabb169'],
                 "cf_logradouro": request_body['current']['e75f615cb8aac7c990d023d3df74aea7c0306817'],
-                "job_title": request_body['current']['c1ad668236989f4f735179c1594c3eb8fb5f3bf3']
+                "job_title": request_body['current']['c1ad668236989f4f735179c1594c3eb8fb5f3bf3'],
+                "cf_cpf": request_body['current']['5700b737d526ec982fb457788a60000816c71fff'],
+                "cf_cnpj": request_body['current']['c0f2b6951407d4f1c627385d8b94951861c6f16d'],
             }
             lead.update(data, uuid)
         
