@@ -28,16 +28,16 @@ def contact_view(request):
             
             if response_status != 201:
                 # Retornar uma resposta de erro
-                return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': True})
+                return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': True, 'button_text': "Solicitar contato" })
 
             # Retornar uma resposta de sucesso ou redirecionar para outra página
             return render(request, 'app/thanks.html', { 'message': "Em instantes um de nossas agentes irá entrar em contato!" })
         else:
-            return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': True})
+            return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': True, 'button_text': "Solicitar contato" })
     else:
         form = ContactForm()
 
-    return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': False})
+    return render(request, 'app/form.html', { 'title': 'Interesse no produto', 'form': form, 'error': False, 'button_text': "Solicitar contato" })
 
 def additional_info_view(request, personId):
     if request.method == "POST":
@@ -61,19 +61,21 @@ def additional_info_view(request, personId):
                 "c1ad668236989f4f735179c1594c3eb8fb5f3bf3": job_title
             }
             # Atualizar o person no Pipedrive
-            # status_code = person.update(data, personId)
+            status_code = person.update(data, personId)
 
-            if True:
+            if status_code != 200:
                 # Retornar uma resposta de erro
-                return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': True})
-        else:
-            return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': True})
+                return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': True, 'button_text': "Enviar" })
+            
+            # Retornar uma resposta de sucesso ou redirecionar para outra página
+            return render(request, 'app/thanks.html', { 'message': "Muito bem, estamos muito contentes pelo seu interesse!" })
 
-        return render(request, 'app/thanks.html', { 'message': "Muito bem, estamos muito contentes pelo seu interesse!" })
-    
+        else:
+            return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': True, 'button_text': "Enviar" })
+
     else:
         form = AddcionalInfoForm()
     
-    return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': False})
+    return render(request, 'app/form.html', { 'title': 'Informações adicionais', 'form': form, 'error': False, 'button_text': "Enviar" })
 
 
