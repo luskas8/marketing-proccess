@@ -3,7 +3,7 @@ Integração entre o formulário de captura de dados por marketing digital e CRM
 
 O projeto pode ser testado neste [link](https://www.luskas8.xyz).
 
-## Tecnilogias
+## Tecnologias
 
 - Python
 - Django
