@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Marketing Proccess Schema API
+  version: 0.0.0
+paths:
+  /api/pipedrive/webhook_deal:
+    get:
+      operationId: api_pipedrive_webhook_deal_retrieve
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_pipedrive_webhook_deal_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/pipedrive/webhook_person:
+    get:
+      operationId: api_pipedrive_webhook_person_retrieve
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_pipedrive_webhook_person_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/rdstation/oauth:
+    get:
+      operationId: api_rdstation_oauth_retrieve
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/rdstation/oauth/callback:
+    get:
+      operationId: api_rdstation_oauth_callback_retrieve
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/rdstation/webhook:
+    get:
+      operationId: api_rdstation_webhook_retrieve
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_rdstation_webhook_create
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+components: {}

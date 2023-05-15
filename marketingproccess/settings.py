@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'pipedrivecrm',
     'rest_framework',
     'widget_tweaks',
+    'drf_spectacular',
+    'drf_spectacular_sidecar'
 ]
 
 REST_FRAMEWORK = {
@@ -53,6 +55,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Marketing Proccess Schema API',
 }
 
 MIDDLEWARE = [
