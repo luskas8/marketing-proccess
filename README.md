@@ -38,12 +38,17 @@ python manage.py runserver
 
 **/contact** - tela inicial, é a tela onde uma pessoa faz o contato inicial enviando alguns dados, demonstrando interresse no produto.
 
-**/form/proccess/:personID** - tela de coleta de mais dados, a pessoa recebe um link por email para essa tela, assim que é passa a ser um lead qualificado,
+**/forms/proccess/:personID** - tela de coleta de mais dados, a pessoa recebe um link por email para essa tela, assim que é passa a ser um lead qualificado,
 ou seja, quando entra no funil de vendas.
 
 ### Documentação de API
 
 A api pode ser acessada neste [link](https://www.luskas8.xyz/api/schema).
+
+### Melhorias
+
+- Salvar os campos personalizados e não deixa-los _hard code_.
+- Automatizar obtenção do token do RD Station, com um job agendado.
 
 ### Contribuição
 Se você deseja contribuir com este projeto, fique à vontade para abrir uma issue ou enviar um pull request. Toda contribuição é bem-vinda!
