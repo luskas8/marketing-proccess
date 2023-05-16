@@ -31,7 +31,7 @@ pip install -r requirements.txt
 Chegou a hora de testar:
 
 ```sh
-python manager.py runserver
+python manage.py runserver
 ```
 
 ## Telas
