@@ -121,6 +121,7 @@ def update(data, uuid) -> int:
     return status.HTTP_200_OK
 
 def delete(uuid) -> int:
+    print(uuid)
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
     expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
     timestamp = int(datetime.timestamp(datetime.now()))
@@ -132,6 +133,7 @@ def delete(uuid) -> int:
             return oauth_status_code
     
     url = f"https://api.rd.services/platform/contacts/uuid:{uuid}"
+    print(url)
 
     headers = {
         "accept": "application/json",
