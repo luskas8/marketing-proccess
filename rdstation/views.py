@@ -46,7 +46,6 @@ def webhook(request):
 
             for lead in leads:
                 uuid = lead['uuid']
-                print(uuid)
                 data = {
                     "979ea8099383f9abd2dec402ba39580d32cb4110": uuid,
                     "name": lead["name"],

@@ -121,7 +121,6 @@ def update(data, uuid) -> int:
     return status.HTTP_200_OK
 
 def delete(uuid) -> int:
-    print(uuid)
     access_token = os.environ.get('RDSTATION_ACCESS_TOKEN')
     expires_in = os.environ.get('RDSTATION_EXPIRES_IN')
     timestamp = int(datetime.timestamp(datetime.now()))
@@ -133,7 +132,6 @@ def delete(uuid) -> int:
             return oauth_status_code
     
     url = f"https://api.rd.services/platform/contacts/uuid:{uuid}"
-    print(url)
 
     headers = {
         "accept": "application/json",
@@ -142,7 +140,7 @@ def delete(uuid) -> int:
 
     response = requests.delete(url, headers=headers)
 
-    if response.status_code != status.HTTP_200_OK:
+    if response.status_code != status.HTTP_204_NO_CONTENT:
         print(response.status_code, response.json())
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     
