@@ -140,7 +140,7 @@ def delete(uuid) -> int:
 
     response = requests.delete(url, headers=headers)
 
-    if response.status_code != status.HTTP_200_OK:
+    if response.status_code != status.HTTP_204_NO_CONTENT:
         print(response.status_code, response.json())
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     
