@@ -69,7 +69,7 @@ def webhook(request):
 def oauth_refresh():
     client_id = os.environ.get("client_id")
     client_secret = os.environ.get("client_secret")
-    refresh_token = os.environ.get("refresh_token")
+    refresh_token = os.environ.get("RDSTATION_REFRESH_TOKEN")
 
     if not refresh_token:
         print("Missing refresh token, please contact the administrator")
