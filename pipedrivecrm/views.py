@@ -83,7 +83,6 @@ def webhook_person(request):
         request_body = json.loads(request.body.decode('utf-8'))
         if (request_body['retry'] > 1):
             return JsonResponse({"message": "We know, stop!"}, status=status.HTTP_200_OK)
-        print(request_body)
         
         if request_body['meta']['action'] == 'updated':
             # todo: adicionar campos de CPF e CNPJ
@@ -107,7 +106,6 @@ def webhook_person(request):
         if request_body['meta']['action'] == 'deleted':
             personId = request_body['meta']['id']
             uuid = request_body['previous']['979ea8099383f9abd2dec402ba39580d32cb4110']
-            print(personId, uuid)
             lead.delete(uuid)
         
     
